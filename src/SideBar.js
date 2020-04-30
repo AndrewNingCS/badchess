@@ -7,10 +7,12 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import HomeIcon from "@material-ui/icons/Home";
 import GavelIcon from "@material-ui/icons/Gavel";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
-    backgroundColor: {
+    sideBar: {
       background: "#3E5C76",
+      width: "250px"
     },
     titleColor: {
         color: "#F0EBD8",
@@ -43,9 +45,9 @@ function SideBar() {
             <Drawer 
                 variant="permanent" 
                 anchor="left" 
-                classes={{ paper: styles.backgroundColor }}
+                classes={{ paper: styles.sideBar }}
             >
-                <ListItem button>
+                <ListItem button component={Link} to="/">
                     <ListItemText>
                         <Typography 
                             variant="h4" 
@@ -58,7 +60,7 @@ function SideBar() {
                     </ListItemText>
                 </ListItem>
                 <List>
-                    <ListItem button key="Home">
+                    <ListItem button component={Link} to="/" key="Home">
                         <HomeIcon classes={{ root: styles.iconPadding }} htmlColor="#DAD5C6" />
                         <SideBarItem text="Home" />
                     </ListItem>
