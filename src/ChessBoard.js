@@ -61,6 +61,31 @@ class Block extends React.Component {
         this.props.onCustomClick(this.state);
     }
 
+    componentDidUpdate(prevProps){
+        if (prevProps.boardState !== this.props.boardState) {
+            let piece = this.props.boardState[0];
+            let isWhite = this.props.boardState[1];
+            let image = "";
+            if (piece === "K") {
+                image = isWhite ? whiteKing : blackKing;
+            } else if (piece === "Q") {
+                image = isWhite ? whiteQueen : blackQueen;
+            } else if (piece === "B") {
+                image = isWhite ? whiteBishop : blackBishop;
+            } else if (piece === "H") {
+                image = isWhite ? whiteHorse : blackHorse;
+            } else if (piece === "R") {
+                image = isWhite ? whiteRook : blackRook;
+            } else if (piece === "P") {
+                image = isWhite ? whitePawn : blackPawn;
+            }
+
+            this.setState({piece: piece});
+            this.setState({isWhite: isWhite});
+            this.setState({image: image});
+        }
+    }
+
     render() {
         let focus = this.props.isSelected ? "2px solid #3E5C76" : "";
         if (this.state.image === "") {
@@ -131,12 +156,25 @@ class ChessBoard extends React.Component {
         let piece = blockState.piece;
         let isWhite = blockState.isWhite;
         console.log(`${x}, ${y}, ${piece}, ${isWhite}`);
+        if (piece === "N" && !this.state.isSelected) {
+            return;
+        }
         if (this.checkSelected(x,y)){
             this.setState({isSelected: false});
             this.setState({selectedCoordinate: []});
         } else {
-            this.setState({isSelected: true});
-            this.setState({selectedCoordinate: [x,y]});
+            if (this.state.isSelected){ // release piece
+                let oldCoordinate = this.state.selectedCoordinate;
+                let boardCopy = JSON.parse(JSON.stringify(this.state.board));
+                boardCopy[y][x]['boardState'] = [boardCopy[oldCoordinate[1]][oldCoordinate[0]]['boardState'][0], boardCopy[oldCoordinate[1]][oldCoordinate[0]]['boardState'][1]];
+                boardCopy[oldCoordinate[1]][oldCoordinate[0]]['boardState'] = ["N", true];
+                this.setState({isSelected: false});
+                this.setState({selectedCoordinate: []});
+                this.setState({board: boardCopy});
+            } else {
+                this.setState({isSelected: true});
+                this.setState({selectedCoordinate: [x,y]});
+            }
         }
     }
 
@@ -172,6 +210,7 @@ class ChessBoard extends React.Component {
     }
 
     render() {
+        console.log(this.state.board)
         if (this.state.loaded) {
             return(
                 <Grid container={true}>
