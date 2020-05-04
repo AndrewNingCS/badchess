@@ -34,8 +34,8 @@ class Block extends React.Component {
             image: "",
         }
 
-        let piece = this.props.boardState[this.state.y][this.state.x][0];
-        let isWhite = this.props.boardState[this.state.y][this.state.x][1];
+        let piece = this.props.boardState[0];
+        let isWhite = this.props.boardState[1];
         let image = "";
         if (piece === "K") {
             image = isWhite ? whiteKing : blackKing;
@@ -54,28 +54,18 @@ class Block extends React.Component {
         this.state.piece = piece;
         this.state.isWhite = isWhite;
         this.state.image = image;
-
-        let selected = this.props.selected;
-        if (selected && selected[0] === this.state.x && selected[1] === this.state.y) {
-            this.state.isSelected = true;
-        } else {
-            this.state.isSelected = false;
-        }
-
         this.handleClick = this.handleClick.bind(this);
     }
 
     handleClick() {
-        this.setState({ isSelected: !this.state.isSelected })
         this.props.onCustomClick(this.state);
     }
 
     render() {
-        let focus = this.state.isSelected ? "2px solid #3E5C76" : "";
+        let focus = this.props.isSelected ? "2px solid #3E5C76" : "";
         if (this.state.image === "") {
             return (
                 <CardActionArea
-                    square
                     key={this.state.x}
                     style={{
                         width: blockWidth,
@@ -127,7 +117,9 @@ class ChessBoard extends React.Component {
         super(props);
 
         this.state = {
-            loaded: false
+            loaded: false,
+            isSelected: false,
+            selectedCoordinate: []
         }
 
         this.handleClick = this.handleClick.bind(this);
@@ -139,6 +131,13 @@ class ChessBoard extends React.Component {
         let piece = blockState.piece;
         let isWhite = blockState.isWhite;
         console.log(`${x}, ${y}, ${piece}, ${isWhite}`);
+        if (this.checkSelected(x,y)){
+            this.setState({isSelected: false});
+            this.setState({selectedCoordinate: []});
+        } else {
+            this.setState({isSelected: true});
+            this.setState({selectedCoordinate: [x,y]});
+        }
     }
 
     componentDidMount() {
@@ -152,16 +151,13 @@ class ChessBoard extends React.Component {
                     let parity = y % 2 === 0 ? 0 : 1;
                     for (let x = 0; x < numRows; x++) {
                         let blockColour = x % 2 === parity ? light : dark;
-                        row.push(
-                            <Block
-                                key={x.toString() + y.toString()}
-                                coordinate={[x, y]}
-                                colour={blockColour}
-                                boardState={this.state.gameState.board}
-                                onCustomClick={this.handleClick}
-                                selected={this.state.selected}
-                            />
-                        );
+                        var cardSpecs = {
+                            key: x.toString() + y.toString(),
+                            coordinate: [x,y],
+                            colour: blockColour,
+                            boardState: [this.state.gameState.board[y][x][0], this.state.gameState.board[y][x][1]]
+                        }
+                        row.push(cardSpecs);
                     }
                     board.push(row);
                 }
@@ -170,13 +166,27 @@ class ChessBoard extends React.Component {
             })
     }
 
+    checkSelected(x,y){
+        return this.state.isSelected && this.state.selectedCoordinate[0] === x
+            && this.state.selectedCoordinate[1] === y;
+    }
+
     render() {
         if (this.state.loaded) {
             return(
                 <Grid container={true}>
                     {this.state.board.map((x, i) => (
                         <Grid container key={i}>
-                            {x}
+                            {x.map(x => (
+                                <Block
+                                    key={x.key}
+                                    coordinate={x.coordinate}
+                                    colour={x.colour}
+                                    boardState={x.boardState}
+                                    onCustomClick={this.handleClick}
+                                    isSelected={this.checkSelected(x.coordinate[0], x.coordinate[1])}
+                                />
+                            ))}
                         </Grid>
                     ))}
                 </Grid>
