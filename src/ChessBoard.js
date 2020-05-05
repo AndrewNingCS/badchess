@@ -150,6 +150,26 @@ class ChessBoard extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
+    processJSON(){
+        let board = [];
+        for (let y = 0; y < numRows; y++) {
+            let row = [];
+            let parity = y % 2 === 0 ? 0 : 1;
+            for (let x = 0; x < numRows; x++) {
+                let blockColour = x % 2 === parity ? light : dark;
+                var cardSpecs = {
+                    key: x.toString() + y.toString(),
+                    coordinate: [x,y],
+                    colour: blockColour,
+                    boardState: [this.state.gameState.board[y][x][0], this.state.gameState.board[y][x][1]]
+                }
+                row.push(cardSpecs);
+            }
+            board.push(row);
+        }
+        this.setState({ board: board });
+    }
+
     handleClick(blockState) {
         let x = blockState.x;
         let y = blockState.y;
@@ -165,12 +185,21 @@ class ChessBoard extends React.Component {
         } else {
             if (this.state.isSelected){ // release piece
                 let oldCoordinate = this.state.selectedCoordinate;
-                let boardCopy = JSON.parse(JSON.stringify(this.state.board));
-                boardCopy[y][x]['boardState'] = [boardCopy[oldCoordinate[1]][oldCoordinate[0]]['boardState'][0], boardCopy[oldCoordinate[1]][oldCoordinate[0]]['boardState'][1]];
-                boardCopy[oldCoordinate[1]][oldCoordinate[0]]['boardState'] = ["N", true];
                 this.setState({isSelected: false});
                 this.setState({selectedCoordinate: []});
-                this.setState({board: boardCopy});
+                fetch("http://badchess-server.herokuapp.com/single_player_move", {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({game_id: this.state.gameState.game_id, move_from: oldCoordinate, move_to: [x,y]})
+                })
+                    .then(res=>res.json())
+                    .then(result => this.setState({gameState: result}))
+                    .then(() => {
+                        this.processJSON();
+                    })
             } else {
                 this.setState({isSelected: true});
                 this.setState({selectedCoordinate: [x,y]});
@@ -183,23 +212,7 @@ class ChessBoard extends React.Component {
             .then(res => res.json())
             .then(result => this.setState({ gameState: result }))
             .then(() => {
-                let board = [];
-                for (let y = 0; y < numRows; y++) {
-                    let row = [];
-                    let parity = y % 2 === 0 ? 0 : 1;
-                    for (let x = 0; x < numRows; x++) {
-                        let blockColour = x % 2 === parity ? light : dark;
-                        var cardSpecs = {
-                            key: x.toString() + y.toString(),
-                            coordinate: [x,y],
-                            colour: blockColour,
-                            boardState: [this.state.gameState.board[y][x][0], this.state.gameState.board[y][x][1]]
-                        }
-                        row.push(cardSpecs);
-                    }
-                    board.push(row);
-                }
-                this.setState({ board: board });
+                this.processJSON();
                 this.setState({ loaded: true });
             })
     }
