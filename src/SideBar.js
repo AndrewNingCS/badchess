@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 const useStyles = makeStyles(() => ({
     sideBar: {
       background: "#3E5C76",
-      width: "250px"
+      width: "12vw"
     },
     titleColor: {
         color: "#F0EBD8",

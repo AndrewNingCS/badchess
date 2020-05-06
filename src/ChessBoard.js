@@ -18,10 +18,11 @@ import whitePawn from './imgs/white_pawn.png';
 
 
 const numRows = 8;
+const numCols = 8;
 const dark = "#F1AD79";
 const light = "#F0EBD8";
-const blockWidth = "100px";
-const blockHeight = "100px";
+const blockWidth = "100%";
+const blockHeight = "100%";
 
 
 class Block extends React.Component {
@@ -89,18 +90,23 @@ class Block extends React.Component {
     render() {
         let focus = this.props.isSelected ? "2px solid #3E5C76" : "";
         if (this.state.image === "") {
-            return (
-                <CardActionArea
+            return (   
+                <Card
+                    square
                     key={this.state.x}
-                    style={{
-                        width: blockWidth,
-                        height: blockHeight,
-                        backgroundColor: this.props.colour,
-                        border: focus
-                    }}
-                    onClick={() => this.handleClick()}
-                    disableRipple
-                />
+                    style={{width: "12.5%"}}
+                >     
+                    <CardActionArea
+                        style={{
+                            width: blockWidth,
+                            height: blockHeight,
+                            backgroundColor: this.props.colour,
+                            border: focus
+                        }}
+                        onClick={() => this.handleClick()}
+                        disableRipple
+                    />
+                </Card>
             )
         }
         return (
@@ -108,6 +114,7 @@ class Block extends React.Component {
                 square
                 key={this.state.x}
                 onClick={() => this.handleClick()}
+                style={{width: "12.5%"}}
             >
                 <CardActionArea
                     style={{
@@ -226,9 +233,9 @@ class ChessBoard extends React.Component {
         console.log(this.state.board)
         if (this.state.loaded) {
             return(
-                <Grid container={true}>
+                <Grid container={true} style={{height: "88vmin", width: "88vmin"}}>
                     {this.state.board.map((x, i) => (
-                        <Grid container key={i}>
+                        <Grid container key={i} style={{width: "100%", height: (100/numRows) + "%"}}>
                             {x.map(x => (
                                 <Block
                                     key={x.key}
