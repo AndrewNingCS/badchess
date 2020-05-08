@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 function Join() {
     return (
-      <div className="Home" style={{width: "100%", height: "100vh", backgroundColor: "#748CAB"}}>
+      <div className="Join" style={{width: "100%", height: "100vh", backgroundColor: "#748CAB"}}>
         <SideBar/>
         <div style={{marginLeft: "12vw"}}>
             <Typography style={{paddingTop: "75px", fontSize:"5rem"}} align="center">
