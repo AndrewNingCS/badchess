@@ -1,6 +1,7 @@
 import React from 'react';
 import Home from './Home';
 import SinglePlayer from './SinglePlayer';
+import Join from './Join';
 import { Switch, Route, Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 const history = createBrowserHistory();
@@ -11,7 +12,7 @@ function App() {
       <Switch>
         <Route path="/" exact component={Home}/>
         <Route path="/create"/>
-        <Route path="/join"/>
+        <Route path="/join" component={Join}/>
         <Route path="/singleplayer" component={SinglePlayer}/>
       </Switch>
     </Router>

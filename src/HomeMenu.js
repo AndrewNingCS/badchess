@@ -15,7 +15,7 @@ function HomeMenu(){
                 </Button>
             </Container>
             <Container style={{paddingTop: "25px"}} align="center" maxWidth="xs">
-                <Button style={{textTransform: 'none', backgroundColor: "#F0EBD8"}} fullWidth={true} variant="contained">
+                <Button component={Link} to="join" style={{textTransform: 'none', backgroundColor: "#F0EBD8"}} fullWidth={true} variant="contained">
                     <Typography variant="h3">
                         Join a Room
                     </Typography>
