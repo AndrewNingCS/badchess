@@ -2,6 +2,7 @@ import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import React from 'react';
+import makeCall from './MakeCall'
 
 import blackKing from './imgs/black_king.png'; // http://clipart-library.com/clipart/pcqrGKzLi.htm
 import whiteKing from './imgs/white_king.png';
@@ -202,14 +203,12 @@ class ChessBoard extends React.Component {
                 this.setState({isSelected: false});
                 this.setState({selectedCoordinate: []});
                 if (this.state.isSinglePlayer) {
-                    fetch("http://badchess-server.herokuapp.com/single_player_move", {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({game_id: this.state.gamestate.gameID, move_from: oldCoordinate, move_to: [x,y]})
+                    let data = JSON.stringify({
+                        game_id: this.state.gameState.gameID,
+                        move_from: oldCoordinate,
+                        move_to: [x,y]
                     })
+                    makeCall("single_player_move", "POST", data)
                         .then(res=>res.json())
                         .then(result => this.setState({gameState: result}))
                         .then(() => {
@@ -217,26 +216,13 @@ class ChessBoard extends React.Component {
                         })
                 } else {
                     // this is here the make move, then wait for move logic will be
-                    let body = JSON.stringify({
-                        game_id: this.state.gamestate.gameID,
+                    let data = JSON.stringify({
+                        game_id: this.state.gameState.gameID,
                         player_id: this.state.playerID,
                         move_from: oldCoordinate,
                         move_to: [x,y]
                     })
-                    console.log(body);
-                    fetch("http://badchess-server.herokuapp.com/make_move", {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            game_id: this.state.gamestate.gameID,
-                            player_id: this.state.playerID,
-                            move_from: oldCoordinate,
-                            move_to: [x,y]
-                        })
-                    })
+                    makeCall("make_move", "POST", data)
                         .then(res => res.json())
                         .then(result => {
                             this.setState({gameState: result});
@@ -247,20 +233,13 @@ class ChessBoard extends React.Component {
                             return result
                         })
                         .then(result => {
-                            console.log(result);
                             // if the move was valid, we wait for the next move
                             if (!result.invalid_move) {
-                                fetch("http://badchess-server.herokuapp.com/wait_for_move", {
-                                    method: 'POST',
-                                    headers: {
-                                        'Accept': 'application/json',
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({
-                                        game_id: this.state.gamestate.gameID,
-                                        player_id: this.state.playerID
-                                    })
+                                let data = JSON.stringify({
+                                    game_id: this.state.gameState.gameID,
+                                    player_id: this.state.playerID
                                 })
+                                makeCall("wait_for_move", "POST", data)
                                     .then(res => res.json())
                                     .then(result => {
                                         this.setState({gameState: result});
@@ -280,7 +259,7 @@ class ChessBoard extends React.Component {
 
     componentDidMount() {
         if (this.state.isSinglePlayer) {
-            fetch("https://badchess-server.herokuapp.com/create_single_player_game")
+            makeCall("create_single_player_game", "GET")
                 .then(res => res.json())
                 .then(result => this.setState({ gameState: result }))
                 .then(() => {
@@ -288,22 +267,11 @@ class ChessBoard extends React.Component {
                     this.setState({ loaded: true });
                 })
         } else {
-            let body = JSON.stringify({
+            let data = JSON.stringify({
                 game_id: this.state.gameID,
                 player_id: this.state.playerID
             })
-            console.log(body)
-            fetch("http://badchess-server.herokuapp.com/has_game_started", {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    game_id: this.state.gameID,
-                    player_id: this.state.playerID
-                })
-            })
+            makeCall("has_game_started", "POST", data)
                 .then(res => res.json())
                 .then(result => {
                     this.setState({ 
@@ -314,17 +282,11 @@ class ChessBoard extends React.Component {
                 .then(() => {
                     // If playernumber is 2, game starts off by waiting for a move
                     if (this.state.playerNumber === 2) {
-                        fetch("http://badchess-server.herokuapp.com/wait_for_move", {
-                            method: 'POST',
-                            headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                game_id: this.state.gameID,
-                                player_id: this.state.playerID
-                            })
+                        let data = JSON.stringify({
+                            game_id: this.state.gameID,
+                            player_id: this.state.playerID
                         })
+                        makeCall("wait_for_move", "POST", data)
                             .then(res => res.json())
                             .then(result => {
                                 this.setState({
@@ -337,17 +299,11 @@ class ChessBoard extends React.Component {
     }
 
     componentWillUnmount() {
-        fetch("http://badchess-server.herokuapp.com/leave_two_player_game", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                game_id: this.state.gameID,
-                player_id: this.state.playerID
-            })
+        let data = JSON.stringify({
+            game_id: this.state.gameID,
+            player_id: this.state.playerID
         })
+        makeCall("leave_two_player_game", "POST", data)
     }
 
     checkSelected(x,y){
