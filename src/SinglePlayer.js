@@ -10,7 +10,10 @@ function SinglePlayer() {
     <div className="SinglePlayer" style={{width: "100%", position: "relative", overflow: "hidden", height: "100vh", backgroundColor: "#748CAB"}}>
       <SideBar/>
       <div style={{marginLeft: "12vw"}}>
-        <ChessBoard/>
+        <ChessBoard
+          isSinglePlayer={true}
+          playerNumber={1}
+        />
       </div>
     </div>
   );
