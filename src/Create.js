@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import TwoPlayer from './TwoPlayer'
 import makeCall from './MakeCall'
 
-const poll_interval = 3 // in seconds
+const pollInterval = 3 // in seconds
 
 class Create extends React.Component {
     constructor(props) {
@@ -25,15 +25,15 @@ class Create extends React.Component {
 
     onClickStart() {
         let data = JSON.stringify({
-            game_id: this.state.gameID,
-            player_id: this.state.playerID
+            gameID: this.state.gameID,
+            playerID: this.state.playerID
         })
         makeCall("start_two_player_game", "POST", data)
             .then(res => res.json())
             .then(result => {
                 // returns a GAME STATE JSON object
                 this.setState({
-                    gameStarted: result.game_started
+                    gameStarted: result.gameStarted
                 })
                 clearInterval(this.timer);
                 this.timer = null; // stop polling once the game starts
@@ -45,15 +45,15 @@ class Create extends React.Component {
             .then(res => res.json())
             .then(result => {
                 this.setState({
-                    gameID: result.game_id,
-                    playerID: result.player_id,
-                    roomCode: result.room_code,
-                    roomLink: result.room_link
+                    gameID: result.gameID,
+                    playerID: result.playerID,
+                    roomCode: result.roomCode,
+                    roomLink: result.roomLink
                 })
             })
             .then(() => {
                 // poll server every few seconds
-                this.timer = setInterval(() => this.pollServer(), 1000 * poll_interval);
+                this.timer = setInterval(() => this.pollServer(), 1000 * pollInterval);
             })
     }
 
@@ -63,16 +63,16 @@ class Create extends React.Component {
         this.timer = null; // stop polling if user leaves the page
 
         let data = JSON.stringify({
-            game_id: this.state.gameID,
-            player_id: this.state.playerID
+            gameID: this.state.gameID,
+            playerID: this.state.playerID
         })
         makeCall("leave_two_player_game", "POST", data)
     }
 
     pollServer() {
         let data = JSON.stringify({
-            game_id: this.state.gameID,
-            player_id: this.state.playerID
+            gameID: this.state.gameID,
+            playerID: this.state.playerID
         })
         makeCall("has_player_joined", "POST", data)
             .then(res => res.json())

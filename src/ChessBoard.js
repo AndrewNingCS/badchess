@@ -204,9 +204,9 @@ class ChessBoard extends React.Component {
                 this.setState({selectedCoordinate: []});
                 if (this.state.isSinglePlayer) {
                     let data = JSON.stringify({
-                        game_id: this.state.gameState.gameID,
-                        move_from: oldCoordinate,
-                        move_to: [x,y]
+                        gameID: this.state.gameState.gameID,
+                        moveFrom: oldCoordinate,
+                        moveTo: [x,y]
                     })
                     makeCall("single_player_move", "POST", data)
                         .then(res=>res.json())
@@ -217,10 +217,10 @@ class ChessBoard extends React.Component {
                 } else {
                     // this is here the make move, then wait for move logic will be
                     let data = JSON.stringify({
-                        game_id: this.state.gameState.gameID,
-                        player_id: this.state.playerID,
-                        move_from: oldCoordinate,
-                        move_to: [x,y]
+                        gameID: this.state.gameState.gameID,
+                        playerID: this.state.playerID,
+                        moveFrom: oldCoordinate,
+                        moveTo: [x,y]
                     })
                     makeCall("make_move", "POST", data)
                         .then(res => res.json())
@@ -234,10 +234,10 @@ class ChessBoard extends React.Component {
                         })
                         .then(result => {
                             // if the move was valid, we wait for the next move
-                            if (!result.invalid_move) {
+                            if (!result.invalidMove) {
                                 let data = JSON.stringify({
-                                    game_id: this.state.gameState.gameID,
-                                    player_id: this.state.playerID
+                                    gameID: this.state.gameState.gameID,
+                                    playerID: this.state.playerID
                                 })
                                 makeCall("wait_for_move", "POST", data)
                                     .then(res => res.json())
@@ -268,8 +268,8 @@ class ChessBoard extends React.Component {
                 })
         } else {
             let data = JSON.stringify({
-                game_id: this.state.gameID,
-                player_id: this.state.playerID
+                gameID: this.state.gameID,
+                playerID: this.state.playerID
             })
             makeCall("has_game_started", "POST", data)
                 .then(res => res.json())
@@ -283,8 +283,8 @@ class ChessBoard extends React.Component {
                     // If playernumber is 2, game starts off by waiting for a move
                     if (this.state.playerNumber === 2) {
                         let data = JSON.stringify({
-                            game_id: this.state.gameID,
-                            player_id: this.state.playerID
+                            gameID: this.state.gameID,
+                            playerID: this.state.playerID
                         })
                         makeCall("wait_for_move", "POST", data)
                             .then(res => res.json())
@@ -300,8 +300,8 @@ class ChessBoard extends React.Component {
 
     componentWillUnmount() {
         let data = JSON.stringify({
-            game_id: this.state.gameID,
-            player_id: this.state.playerID
+            gameID: this.state.gameID,
+            playerID: this.state.playerID
         })
         makeCall("leave_two_player_game", "POST", data)
     }
