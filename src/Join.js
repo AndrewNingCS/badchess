@@ -6,6 +6,7 @@ import { Container } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { Link } from "react-router-dom";
 import TwoPlayer from './TwoPlayer'
+import makeCall from './MakeCall'
 
 const poll_interval = 3 // in seconds
 
@@ -17,33 +18,26 @@ class Join extends React.Component {
             gameID: 0,
             playerID: "",
             roomCode: "",
-            joined: false
+            joined: false,
+            gameStarted: false
         }
 
         this.timer = null;
     }
 
     onClickJoin() {
-        fetch("http://badchess-server.herokuapp.com/join_two_player_game", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                room_code: this.state.roomCode
-            })
+        let data = JSON.stringify({
+            room_code: this.state.roomCode
         })
+        makeCall("join_two_player_game", "POST", data)
             .then(res => res.json())
             .then(result => {
                 this.setState({
                     gameID: result.game_id,
                     playerID: result.player_id,
                     joined: true,
-                    gameStarted: false,
-                    gameState: null
+                    gameStarted: false
                 })
-                console.log(result);
                 // poll the server to see if the game started
                 this.timer = setInterval(() => this.pollServer(), 1000 * poll_interval);
             })
@@ -58,17 +52,11 @@ class Join extends React.Component {
     // called when the back button is pressed or when tab is closed
     componentWillUnmount() {
         if (this.state.joined) {
-            fetch("http://badchess-server.herokuapp.com/leave_two_player_game", {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    game_id: this.state.gameID,
-                    player_id: this.state.playerID
-                })
+            let data = JSON.stringify({
+                game_id: this.state.gameID,
+                player_id: this.state.playerID
             })
+            makeCall("leave_two_player_game", "POST", data)
         }
         if (this.timer !== null) {
             clearInterval(this.timer);
@@ -77,25 +65,16 @@ class Join extends React.Component {
     }
 
     pollServer() {
-        console.log(this.state.gameID);
-        console.log(this.state.playerID);
-        fetch("http://badchess-server.herokuapp.com/has_game_started", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                game_id: this.state.gameID,
-                player_id: this.state.playerID
-            })
+        let data = JSON.stringify({
+            game_id: this.state.gameID,
+            player_id: this.state.playerID
         })
+        makeCall("has_game_started", "POST", data)
             .then(res => res.json())
             .then(result => {
                 // returns a game state JSON object
                 this.setState({
-                    gameStarted: result.game_started,
-                    gameState: result
+                    gameStarted: result.game_started
                 })
                 if (result.game_started) {
                     // clear the timer
