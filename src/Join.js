@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import TwoPlayer from './TwoPlayer'
 import makeCall from './MakeCall'
 
-const poll_interval = 3 // in seconds
+const pollInterval = 3 // in seconds
 
 class Join extends React.Component {
     constructor(props) {
@@ -27,19 +27,19 @@ class Join extends React.Component {
 
     onClickJoin() {
         let data = JSON.stringify({
-            room_code: this.state.roomCode
+            roomCode: this.state.roomCode
         })
         makeCall("join_two_player_game", "POST", data)
             .then(res => res.json())
             .then(result => {
                 this.setState({
-                    gameID: result.game_id,
-                    playerID: result.player_id,
+                    gameID: result.gameID,
+                    playerID: result.playerID,
                     joined: true,
                     gameStarted: false
                 })
                 // poll the server to see if the game started
-                this.timer = setInterval(() => this.pollServer(), 1000 * poll_interval);
+                this.timer = setInterval(() => this.pollServer(), 1000 * pollInterval);
             })
     }
 
@@ -53,8 +53,8 @@ class Join extends React.Component {
     componentWillUnmount() {
         if (this.state.joined) {
             let data = JSON.stringify({
-                game_id: this.state.gameID,
-                player_id: this.state.playerID
+                gameID: this.state.gameID,
+                playerID: this.state.playerID
             })
             makeCall("leave_two_player_game", "POST", data)
         }
@@ -66,17 +66,17 @@ class Join extends React.Component {
 
     pollServer() {
         let data = JSON.stringify({
-            game_id: this.state.gameID,
-            player_id: this.state.playerID
+            gameID: this.state.gameID,
+            playerID: this.state.playerID
         })
         makeCall("has_game_started", "POST", data)
             .then(res => res.json())
             .then(result => {
                 // returns a game state JSON object
                 this.setState({
-                    gameStarted: result.game_started
+                    gameStarted: result.gameStarted
                 })
-                if (result.game_started) {
+                if (result.gameStarted) {
                     // clear the timer
                     clearInterval(this.timer);
                     this.timer = null;
