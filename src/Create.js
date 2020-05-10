@@ -42,6 +42,8 @@ class Create extends React.Component {
                     gameStarted: result.game_started,
                     gameState: result
                 })
+                clearInterval(this.timer);
+                this.timer = null; // stop polling once the game starts
             })
     }
 

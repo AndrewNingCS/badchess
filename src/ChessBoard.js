@@ -157,8 +157,8 @@ class ChessBoard extends React.Component {
         }
 
         if (!this.props.isSinglePlayer) {
-            this.state.game_id = this.props.gameID;
-            this.state.player_id = this.props.playerID;
+            this.state.gameID = this.props.gameID;
+            this.state.playerID = this.props.playerID;
         }
 
         this.handleClick = this.handleClick.bind(this);
@@ -208,7 +208,7 @@ class ChessBoard extends React.Component {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({game_id: this.state.gameState.game_id, move_from: oldCoordinate, move_to: [x,y]})
+                        body: JSON.stringify({game_id: this.state.gamestate.gameID, move_from: oldCoordinate, move_to: [x,y]})
                     })
                         .then(res=>res.json())
                         .then(result => this.setState({gameState: result}))
@@ -218,8 +218,8 @@ class ChessBoard extends React.Component {
                 } else {
                     // this is here the make move, then wait for move logic will be
                     let body = JSON.stringify({
-                        game_id: this.state.gameState.game_id,
-                        player_id: this.state.player_id,
+                        game_id: this.state.gamestate.gameID,
+                        player_id: this.state.playerID,
                         move_from: oldCoordinate,
                         move_to: [x,y]
                     })
@@ -231,8 +231,8 @@ class ChessBoard extends React.Component {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            game_id: this.state.gameState.game_id,
-                            player_id: this.state.player_id,
+                            game_id: this.state.gamestate.gameID,
+                            player_id: this.state.playerID,
                             move_from: oldCoordinate,
                             move_to: [x,y]
                         })
@@ -257,8 +257,8 @@ class ChessBoard extends React.Component {
                                         'Content-Type': 'application/json',
                                     },
                                     body: JSON.stringify({
-                                        game_id: this.state.gameState.game_id,
-                                        player_id: this.state.player_id
+                                        game_id: this.state.gamestate.gameID,
+                                        player_id: this.state.playerID
                                     })
                                 })
                                     .then(res => res.json())
@@ -289,8 +289,8 @@ class ChessBoard extends React.Component {
                 })
         } else {
             let body = JSON.stringify({
-                game_id: this.state.game_id,
-                player_id: this.state.player_id
+                game_id: this.state.gameID,
+                player_id: this.state.playerID
             })
             console.log(body)
             fetch("http://badchess-server.herokuapp.com/has_game_started", {
@@ -300,8 +300,8 @@ class ChessBoard extends React.Component {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    game_id: this.state.game_id,
-                    player_id: this.state.player_id
+                    game_id: this.state.gameID,
+                    player_id: this.state.playerID
                 })
             })
                 .then(res => res.json())
@@ -321,8 +321,8 @@ class ChessBoard extends React.Component {
                                 'Content-Type': 'application/json',
                             },
                             body: JSON.stringify({
-                                game_id: this.state.game_id,
-                                player_id: this.state.player_id
+                                game_id: this.state.gameID,
+                                player_id: this.state.playerID
                             })
                         })
                             .then(res => res.json())
@@ -334,6 +334,20 @@ class ChessBoard extends React.Component {
                     }
                 })
         }
+    }
+
+    componentWillUnmount() {
+        fetch("http://badchess-server.herokuapp.com/leave_two_player_game", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                game_id: this.state.gameID,
+                player_id: this.state.playerID
+            })
+        })
     }
 
     checkSelected(x,y){
