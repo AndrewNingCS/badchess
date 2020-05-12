@@ -185,6 +185,20 @@ class ChessBoard extends React.Component {
         this.setState({ board: board });
     }
 
+    waitMove(){
+        let wait = new EventSource("//badchess-server.herokuapp.com/wait_for_move", { withCredentials: true });
+        wait.addEventListener('message', (e) => {
+            let data = JSON.parse(e.data)
+            console.log(data);
+            if (data.playerTurn === this.state.playerNumber) {
+                this.setState({gameState: data}, this.processJSON());
+            }
+        });
+        wait.addEventListener('close', function(e) {
+            wait.close();
+        })
+    }
+
     handleClick(blockState) {
         let x = blockState.x;
         let y = blockState.y;
@@ -235,18 +249,7 @@ class ChessBoard extends React.Component {
                         .then(result => {
                             // if the move was valid, we wait for the next move
                             if (!result.invalidMove) {
-                                let data = JSON.stringify({
-                                    gameID: this.state.gameState.gameID,
-                                    playerID: this.state.playerID
-                                })
-                                makeCall("wait_for_move", "POST", data)
-                                    .then(res => res.json())
-                                    .then(result => {
-                                        this.setState({gameState: result});
-                                    })
-                                    .then(() => {
-                                        this.processJSON();
-                                    })
+                                this.waitMove();
                             }
                         })
                 }
@@ -282,28 +285,20 @@ class ChessBoard extends React.Component {
                 .then(() => {
                     // If playernumber is 2, game starts off by waiting for a move
                     if (this.state.playerNumber === 2) {
-                        let data = JSON.stringify({
-                            gameID: this.state.gameID,
-                            playerID: this.state.playerID
-                        })
-                        makeCall("wait_for_move", "POST", data)
-                            .then(res => res.json())
-                            .then(result => {
-                                this.setState({
-                                    gameState: result
-                                }, this.processJSON);
-                            })
+                        this.waitMove();
                     }
                 })
         }
     }
 
     componentWillUnmount() {
-        let data = JSON.stringify({
-            gameID: this.state.gameID,
-            playerID: this.state.playerID
-        })
-        makeCall("leave_two_player_game", "POST", data)
+        if (!this.state.isSinglePlayer) {
+            let data = JSON.stringify({
+                gameID: this.state.gameID,
+                playerID: this.state.playerID
+            })
+            makeCall("leave_two_player_game", "POST", data)
+        }
     }
 
     checkSelected(x,y){
