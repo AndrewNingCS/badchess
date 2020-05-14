@@ -1,6 +1,6 @@
 
 function makeCall(action, requestType, data=null, logging=true) {
-    let url = "http://badchess-server.herokuapp.com/" + action;
+    let url = "https://badchess-server.herokuapp.com/" + action;
     if (requestType === "GET") {
         if (logging) {
             console.log(`Making a ${requestType} request to ${action}`);

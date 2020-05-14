@@ -63,7 +63,7 @@ class Block extends React.Component {
         this.props.onCustomClick(this.state);
     }
 
-    componentDidUpdate(prevProps){
+    componentDidUpdate(prevProps) {
         if (prevProps.boardState !== this.props.boardState) {
             let piece = this.props.boardState[0];
             let isWhite = this.props.boardState[1];
@@ -165,7 +165,7 @@ class ChessBoard extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    processJSON(){
+    processJSON() {
         let board = [];
         for (let y = 0; y < numRows; y++) {
             let row = [];
@@ -185,16 +185,17 @@ class ChessBoard extends React.Component {
         this.setState({ board: board });
     }
 
-    waitMove(){
-        let wait = new EventSource("//badchess-server.herokuapp.com/wait_for_move", { withCredentials: true });
+    waitMove() {
+        let wait = new EventSource("https://badchess-server.herokuapp.com/wait_for_move", { withCredentials: true });
         wait.addEventListener('message', (e) => {
             let data = JSON.parse(e.data)
             console.log(data);
             if (data.playerTurn === this.state.playerNumber) {
-                this.setState({gameState: data}, this.processJSON());
+                this.setState({gameState: data}, this.processJSON);
             }
         });
         wait.addEventListener('close', function(e) {
+            console.log("Closing wait connection")
             wait.close();
         })
     }
@@ -208,11 +209,11 @@ class ChessBoard extends React.Component {
         if (piece === "N" && !this.state.isSelected) {
             return;
         }
-        if (this.checkSelected(x,y)){
+        if (this.checkSelected(x,y)) {
             this.setState({isSelected: false});
             this.setState({selectedCoordinate: []});
         } else {
-            if (this.state.isSelected){ // release piece
+            if (this.state.isSelected) { // release piece
                 let oldCoordinate = this.state.selectedCoordinate;
                 this.setState({isSelected: false});
                 this.setState({selectedCoordinate: []});
@@ -239,14 +240,9 @@ class ChessBoard extends React.Component {
                     makeCall("make_move", "POST", data)
                         .then(res => res.json())
                         .then(result => {
-                            this.setState({gameState: result});
-                            return result
-                        })
-                        .then(result => {
-                            this.processJSON();
-                            return result
-                        })
-                        .then(result => {
+                            this.setState({
+                                gameState: result
+                            }, this.processJSON);
                             // if the move was valid, we wait for the next move
                             if (!result.invalidMove) {
                                 this.waitMove();
@@ -291,17 +287,17 @@ class ChessBoard extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-        if (!this.state.isSinglePlayer) {
-            let data = JSON.stringify({
-                gameID: this.state.gameID,
-                playerID: this.state.playerID
-            })
-            makeCall("leave_two_player_game", "POST", data)
-        }
-    }
+    // componentWillUnmount() {
+    //     if (!this.state.isSinglePlayer) {
+    //         let data = JSON.stringify({
+    //             gameID: this.state.gameID,
+    //             playerID: this.state.playerID
+    //         })
+    //         makeCall("leave_two_player_game", "POST", data)
+    //     }
+    // }
 
-    checkSelected(x,y){
+    checkSelected(x,y) {
         return this.state.isSelected && this.state.selectedCoordinate[0] === x
             && this.state.selectedCoordinate[1] === y;
     }
