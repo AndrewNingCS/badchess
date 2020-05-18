@@ -2,6 +2,7 @@ import React from 'react';
 import ChessBoard from './ChessBoard';
 import SideBar from './SideBar';
 import makeCall from './MakeCall'
+import PlayerPanel from './PlayerPanel'
 
 
 const numRows = 8;
@@ -119,10 +120,42 @@ class TwoPlayer extends React.Component {
         // TODO: Create a loading display component
         let display = "Loading from server";
         if (this.state.loaded) {
-            display = <ChessBoard
-                board={this.state.board}
-                onMovePiece={this.makeMove}
-            />
+            display = <div>
+            <div
+                style={{
+                    marginLeft: "15vw",
+                    float: "left",
+                    marginRight: "15px"
+                }}
+            >
+                <ChessBoard
+                    board={this.state.board}
+                    onMovePiece={this.makeMove}
+                />
+            </div>
+            <div>
+                <div
+                    style={{
+                        marginBottom: "10px"
+                    }}
+                >
+                    <PlayerPanel
+                        name="Player 2"
+                        deadPieces={this.state.gameState.deadPieces.black}
+                        isTurn={this.state.gameState.playerTurn === 2}
+                        opponent={this.state.playerNumber === 1}
+                    />
+                </div>
+                <div>
+                    <PlayerPanel
+                        name="Player 1"
+                        deadPieces={this.state.gameState.deadPieces.white}
+                        isTurn={this.state.gameState.playerTurn === 1}
+                        opponent={this.state.playerNumber === 2}
+                    />
+                </div>
+            </div>
+        </div>
         }
         return (
             <div
@@ -135,9 +168,7 @@ class TwoPlayer extends React.Component {
                 backgroundColor: "#748CAB"
             }}>
                 <SideBar/>
-                <div style={{marginLeft: "15vw"}}>
-                    {display}
-                </div>
+                {display}
             </div>
         )
     }

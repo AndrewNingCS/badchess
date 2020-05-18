@@ -64,7 +64,6 @@ class ChessBoard extends React.Component {
                 // selecting a piece for the first time
                 let possibilities = this.noPossibilities();
                 let possibleMoves = this.state.board[y][x].pieceData[2];
-                console.log(this.state.board[y][x])
                 possibleMoves.forEach(p => {
                     possibilities[p[1]][p[0]] = true;
                 });
@@ -73,7 +72,6 @@ class ChessBoard extends React.Component {
                     selectedCoordinate: [x,y],
                     possibilities: possibilities
                 })
-                console.log(possibilities)
             }
         }
     }

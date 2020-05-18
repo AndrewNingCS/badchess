@@ -1,7 +1,8 @@
 import React from 'react';
 import ChessBoard from './ChessBoard';
 import SideBar from './SideBar';
-import makeCall from './MakeCall'
+import makeCall from './MakeCall';
+import PlayerPanel from './PlayerPanel';
 
 
 const numRows = 8;
@@ -16,7 +17,7 @@ class SinglePlayer extends React.Component {
 		this.state = {
 			loaded: false,
 			gameState: null,
-			board: null,
+            board: null,
         }
         
         this.makeMove = this.makeMove.bind(this);
@@ -83,25 +84,57 @@ class SinglePlayer extends React.Component {
         // TODO: Create a loading display component
         let display = "Loading from server";
         if (this.state.loaded) {
-            display = <ChessBoard
-                board={this.state.board}
-                onMovePiece={this.makeMove}
-            />
+            display = <div>
+                <div
+                    style={{
+                        marginLeft: "15vw",
+                        float: "left",
+                        marginRight: "15px"
+                    }}
+                >
+                    <ChessBoard
+                        board={this.state.board}
+                        onMovePiece={this.makeMove}
+                    />
+                </div>
+                <div>
+                    <div
+                        style={{
+                            marginBottom: "10px"
+                        }}
+                    >
+                        <PlayerPanel
+                            name="Player 2"
+                            deadPieces={this.state.gameState.deadPieces.black}
+                            isTurn={false}
+                            opponent={true}
+                        />
+                    </div>
+                    <div>
+                        <PlayerPanel
+                            name="Player 1"
+                            deadPieces={this.state.gameState.deadPieces.white}
+                            isTurn={true}
+                            opponent={false}
+                        />
+                    </div>
+                </div>
+            </div>
         }
         return (
             <div
-            className="SinglePlayer"
-            style={{
-                width: "100%",
-                position: "relative",
-                overflow: "hidden",
-                height: "100vh",
-                backgroundColor: "#748CAB"
-            }}>
+                className="SinglePlayer"
+                style={{
+                    width: "100%",
+                    position: "relative",
+                    overflow: "hidden",
+                    height: "100vh",
+                    backgroundColor: "#748CAB",
+                    overflowY: "scroll",
+                }}
+            >
                 <SideBar/>
-                <div style={{marginLeft: "15vw"}}>
-                    {display}
-                </div>
+                {display}
             </div>
         )
 	}
