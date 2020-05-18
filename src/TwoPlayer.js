@@ -50,7 +50,8 @@ class TwoPlayer extends React.Component {
         }
         this.setState({
 			board: board,
-			loaded: true
+            loaded: true,
+            winner: this.state.gameState.winner
 		});
     }
 
@@ -131,6 +132,7 @@ class TwoPlayer extends React.Component {
                 <ChessBoard
                     board={this.state.board}
                     onMovePiece={this.makeMove}
+                    winner={this.state.winner}
                 />
             </div>
             <div>

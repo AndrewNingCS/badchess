@@ -1,5 +1,7 @@
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
+import Modal from '@material-ui/core/Modal';
+import Typography from '@material-ui/core/Typography';
 
 import Block from './Block';
 
@@ -111,6 +113,14 @@ class ChessBoard extends React.Component {
                         ))}
                     </Grid>
                 ))}
+                <Modal
+                    open={this.props.winner !== 0}
+                    style={{top: "44vmin", left: "44vmin", paddingLeft: "15vw", marginLeft: "-250px", marginTop: "-75px"}}
+                >
+                    <Typography variant="h3" align="center" style={{top: "50%", left: "50%", background:"white", width: "500px", height: "100px", paddingTop: "50px"}}>
+                        Player {this.props.winner} Wins
+                    </Typography>
+                </Modal>
             </Grid>
         )
     }
