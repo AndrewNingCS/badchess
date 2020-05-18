@@ -153,7 +153,8 @@ class PlayerPanel extends React.Component {
                 style={{
                     display: "flex",
                     width: "20vw",
-                    height: "150px",
+                    height: "22vmin",
+                    minHeight: "150px",
                 }}
             >
                 <CardContent>

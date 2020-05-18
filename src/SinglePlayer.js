@@ -83,14 +83,27 @@ class SinglePlayer extends React.Component {
 
 	render() {
         // TODO: Create a loading display component
-        let display = "Loading from server";
+        let display = <div
+            style={{
+                marginLeft: "15vw",
+                float: "left",
+                marginRight: "15px"
+            }}
+        >
+            Loading from server
+        </div>
         if (this.state.loaded) {
-            display = <div>
+            display = 
+            <div
+                style={{
+                    marginLeft: "20vw",
+                    marginTop: "6vmin",
+                }}
+            >
                 <div
                     style={{
-                        marginLeft: "15vw",
                         float: "left",
-                        marginRight: "15px"
+                        marginRight: "15px",
                     }}
                 >
                     <ChessBoard
@@ -102,11 +115,11 @@ class SinglePlayer extends React.Component {
                 <div>
                     <div
                         style={{
-                            marginBottom: "10px"
+                            marginBottom: "44vmin"
                         }}
                     >
                         <PlayerPanel
-                            name="Player 2"
+                            name="Computer"
                             deadPieces={this.state.gameState.deadPieces.black}
                             isTurn={false}
                             opponent={true}
@@ -114,7 +127,7 @@ class SinglePlayer extends React.Component {
                     </div>
                     <div>
                         <PlayerPanel
-                            name="Player 1"
+                            name="Human Player"
                             deadPieces={this.state.gameState.deadPieces.white}
                             isTurn={true}
                             opponent={false}

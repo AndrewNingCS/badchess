@@ -31,12 +31,15 @@ class Create extends React.Component {
         makeCall("start_two_player_game", "POST", data)
             .then(res => res.json())
             .then(result => {
-                // returns a GAME STATE JSON object
+                // returns a STARTED JSON object
                 this.setState({
                     gameStarted: result.gameStarted
+                }, () => {
+                    if (this.state.gameStarted) {
+                        clearInterval(this.timer);
+                        this.timer = null; // stop polling once the game starts
+                    }
                 })
-                clearInterval(this.timer);
-                this.timer = null; // stop polling once the game starts
             })
     }
 

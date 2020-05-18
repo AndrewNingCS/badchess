@@ -121,43 +121,48 @@ class TwoPlayer extends React.Component {
         // TODO: Create a loading display component
         let display = "Loading from server";
         if (this.state.loaded) {
-            display = <div>
+            display = 
             <div
                 style={{
-                    marginLeft: "15vw",
-                    float: "left",
-                    marginRight: "15px"
+                    marginLeft: "20vw",
+                    marginTop: "6vmin",
                 }}
             >
-                <ChessBoard
-                    board={this.state.board}
-                    onMovePiece={this.makeMove}
-                    winner={this.state.winner}
-                />
-            </div>
-            <div>
                 <div
                     style={{
-                        marginBottom: "10px"
+                        float: "left",
+                        marginRight: "15px",
                     }}
                 >
-                    <PlayerPanel
-                        name="Player 2"
-                        deadPieces={this.state.gameState.deadPieces.black}
-                        isTurn={this.state.gameState.playerTurn === 2}
-                        opponent={this.state.playerNumber === 1}
+                    <ChessBoard
+                        board={this.state.board}
+                        onMovePiece={this.makeMove}
+                        winner={this.state.winner}
                     />
                 </div>
                 <div>
-                    <PlayerPanel
-                        name="Player 1"
-                        deadPieces={this.state.gameState.deadPieces.white}
-                        isTurn={this.state.gameState.playerTurn === 1}
-                        opponent={this.state.playerNumber === 2}
-                    />
+                    <div
+                        style={{
+                            marginBottom: "44vmin"
+                        }}
+                    >
+                        <PlayerPanel
+                            name="Player 2"
+                            deadPieces={this.state.gameState.deadPieces.black}
+                            isTurn={this.state.gameState.playerTurn === 2}
+                            opponent={this.state.playerNumber === 1}
+                        />
+                    </div>
+                    <div>
+                        <PlayerPanel
+                            name="Player 1"
+                            deadPieces={this.state.gameState.deadPieces.white}
+                            isTurn={this.state.gameState.playerTurn === 1}
+                            opponent={this.state.playerNumber === 2}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
         }
         return (
             <div

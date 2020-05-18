@@ -72,7 +72,7 @@ class Join extends React.Component {
         makeCall("has_game_started", "POST", data)
             .then(res => res.json())
             .then(result => {
-                // returns a game state JSON object
+                // returns a STARTED JSON object
                 this.setState({
                     gameStarted: result.gameStarted
                 })
