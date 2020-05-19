@@ -121,6 +121,24 @@ class TwoPlayer extends React.Component {
         // TODO: Create a loading display component
         let display = "Loading from server";
         if (this.state.loaded) {
+            let yourDead = this.state.gameState.deadPieces.white;
+            let opponentDead = this.state.gameState.deadPieces.black;
+            if (this.state.playerNumber === 2) {
+                yourDead = this.state.gameState.deadPieces.black;
+                opponentDead = this.state.gameState.deadPieces.white;
+            }
+            let yourPanel = <PlayerPanel
+                name="Your Name"
+                deadPieces={yourDead}
+                isTurn={this.state.gameState.playerTurn === this.state.playerNumber}
+                opponent={false}
+            />
+            let opponentPanel = <PlayerPanel
+                name="Opponent Name"
+                deadPieces={opponentDead}
+                isTurn={this.state.gameState.playerTurn !== this.state.playerNumber}
+                opponent={true}
+            />
             display = 
             <div
                 style={{
@@ -146,20 +164,10 @@ class TwoPlayer extends React.Component {
                             marginBottom: "44vmin"
                         }}
                     >
-                        <PlayerPanel
-                            name="Player 2"
-                            deadPieces={this.state.gameState.deadPieces.black}
-                            isTurn={this.state.gameState.playerTurn === 2}
-                            opponent={this.state.playerNumber === 1}
-                        />
+                        {opponentPanel}
                     </div>
                     <div>
-                        <PlayerPanel
-                            name="Player 1"
-                            deadPieces={this.state.gameState.deadPieces.white}
-                            isTurn={this.state.gameState.playerTurn === 1}
-                            opponent={this.state.playerNumber === 2}
-                        />
+                        {yourPanel}
                     </div>
                 </div>
             </div>
